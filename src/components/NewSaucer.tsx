@@ -36,8 +36,9 @@ export const NewSaucer = () => {
     const [progress,setProgress] = useState(0);
     const [url,setUrl] = useState('');
 
-    const context:any = useContext(FirebaseContext);
-
+    const {firebase}  = useContext(FirebaseContext);
+    console.log(firebase);
+    
     const navigate = useNavigate();
     
     
@@ -52,10 +53,8 @@ export const NewSaucer = () => {
         validationSchema: Schema,
         onSubmit: data =>{
            try {
-            if (context) {
-                context.firebase.db.collection('products').add({...data,status:true,image:url});
-                navigate('/menu')
-            }
+            firebase.db.collection('products').add({...data,status:true,image:url});
+            navigate('/menu')
            } catch (e) {
             console.error(e)
            }
@@ -68,7 +67,7 @@ export const NewSaucer = () => {
     setProgress(0);
     setUpload(true);
   }
-  const handleUploadError = (error) =>{
+  const handleUploadError = () =>{
     setUpload(false);
     
   }
@@ -76,8 +75,7 @@ export const NewSaucer = () => {
     setProgress(100);
     setUpload(false);
     
-    const url = await context
-                .firebase
+    const url = await firebase
                 .storage
                 .ref('products')
                 .child(name)
@@ -172,7 +170,7 @@ export const NewSaucer = () => {
                             id="image"
                             name="imagen"
                             randomizeFilename
-                            storageRef={context.firebase.storage.ref("products")}
+                            storageRef={firebase.storage.ref("products")}
                             onUploadStart={handleUploadStart}
                             onUploadError={handleUploadError}
                             onUploadSuccess={handleUploadSuccess}
